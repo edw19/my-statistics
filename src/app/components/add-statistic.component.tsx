@@ -3,6 +3,7 @@
 import { useState } from "react";
 import { createStatistic } from "../actions/add-statistic.action"
 import { NumberInput, Button } from "@tremor/react";
+import { revalidateTag } from "next/cache";
 
 export function AddStatisticsButton({ categoryId }: { categoryId: number }) {
     const [value, setValue] = useState<number | undefined>(undefined)
@@ -17,10 +18,12 @@ export function AddStatisticsButton({ categoryId }: { categoryId: number }) {
             }}
             enableStepper={false}
         />
-        <Button disabled={!value} onClick={() => {
-            createStatistic(value!, categoryId)
-            setValue(undefined)
-        }}>
+        <Button disabled={!value}
+            onClick={() => {
+                createStatistic(value!, categoryId)
+                setValue(undefined)
+                revalidateTag("statictics")
+            }}>
             Add Value
         </Button>
     </div>

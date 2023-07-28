@@ -6,9 +6,8 @@ import { Card, Title, LineChart, Flex, Select, SelectItem } from "@tremor/react"
 import { AddStatisticsButton } from "./add-statistic.component"
 
 const options = [
-    // { value: "daily", label: "daily" },
     { value: "weekly", label: "Weekly" },
-    { value: "montly", label: "montly" }
+    { value: "montly", label: "Montly" }
 ]
 
 function useStatistics(categoryId: number, queryBy: string) {
@@ -16,11 +15,8 @@ function useStatistics(categoryId: number, queryBy: string) {
 
     useEffect(() => {
         async function fetchStatistics() {
-            const response = await fetch(`http://localhost:3000/statictics?categoryId=${categoryId}&queryby=${queryBy}`, {
-                next: { tags: ["statistics"] },
-            })
-            const data = await response.json()
-            setData(data.data)
+            const { data } = await fetch(`http://localhost:3000/statictics?categoryId=${categoryId}&queryby=${queryBy}`).then((res) => res.json())
+            setData(data)
         }
         fetchStatistics()
     }, [queryBy])
@@ -54,15 +50,11 @@ export function CategoryChart({ name, categoryId }: { name: string, categoryId: 
             <AddStatisticsButton categoryId={categoryId} />
         </Flex>
         <LineChart
-            data={
-                statistics?.map((sta: any) => ({
-                    [name]: sta.value,
-                    date: Intl.DateTimeFormat("en", { weekday: "long" }).format(new Date(sta.createdAt)),
-                }))
-            }
+            data={statistics}
             className="mt-6"
-            index="date"
-            categories={[name]}
+            index="label"
+            // categories={queryBy === "montly" ? ["sum"] : [name]}
+            categories={["sum"]}
             colors={["emerald", "gray"]}
             yAxisWidth={40}
         />

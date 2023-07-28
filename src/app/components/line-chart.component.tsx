@@ -42,7 +42,6 @@ export function CategoryChart({ name, categoryId }: { name: string, categoryId: 
                 <Select
                     value={queryBy}
                     onValueChange={setQueryBy}
-                    className="mt-2"
                 >
                     {options.map((option) => <SelectItem
                         key={option.value}

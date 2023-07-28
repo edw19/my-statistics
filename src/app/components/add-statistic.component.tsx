@@ -9,7 +9,7 @@ export function AddStatisticsButton({ categoryId }: { categoryId: number }) {
     const [value, setValue] = useState<number | undefined>(undefined)
     const { user } = useUser()
 
-    return <div className="flex flex-col gap-3 mt-3 lg:mt-0 lg:flex-row lg:w-1/3 gap-x-2">
+    return <div className="flex flex-col items-center gap-3 mt-3 lg:mt-0 lg:flex-row lg:w-1/3 gap-x-2">
         <NumberInput
             min={1}
             value={value ?? ""}

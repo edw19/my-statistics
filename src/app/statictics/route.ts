@@ -1,19 +1,23 @@
 import prisma from "@/utils/prisma";
 import { NextResponse } from "next/server";
-import { startOfMonth, endOfMonth, startOfDay, endOfDay, sub, getDay } from 'date-fns'
+import { startOfMonth, endOfMonth, startOfDay, endOfDay, sub, getDay, getDate } from 'date-fns'
 
 const months = ["January", "February", "March", "April", "May", "June", "July", "August", "September", "October", "November", "December"]
 const days = ["Sunday", "Monday", "Tuesday", "Wednesday", "Thursday", "Friday", "Saturday"]
+
+
+interface Value {
+    label: string
+    sum: number
+}
 
 export async function GET(req: Request) {
     const { searchParams } = new URL(req.url)
     const id = searchParams.get('categoryId')
     const queryby = searchParams.get('queryby')
-
-
+    const username = searchParams.get('username')
     const isWeekly = queryby === "weekly"
     const isMonthly = queryby === "montly"
-
 
     const category = await prisma.category.findUnique({
         where: {
@@ -21,22 +25,22 @@ export async function GET(req: Request) {
         }
     })
 
-    if (!category) return new NextResponse(JSON.stringify({ error: "Category not found" }))
-
+    if (!category || !username) return new NextResponse(JSON.stringify({ data: [] }), { status: 404 })
 
     if (isWeekly) {
         const date = new Date()
-        const results: any = []
+        const results: Value[] = []
 
         const today = getDay(date)
         const takeDays = [...days.slice(0, today + 1).reverse()]
         const addMissingDays = [...days.slice(today + 1, days.length).reverse()]
         const daysToShow = [...takeDays, ...addMissingDays]
 
-        let restar = 0
+        let subtract = 0
 
         for (const day of daysToShow) {
-            const currentDate = sub(date, { days: restar })
+            const currentDate = sub(date, { days: subtract })
+            const dayToShow = getDate(currentDate)
 
             const gte = startOfDay(currentDate).toISOString()
             const lte = endOfDay(currentDate).toISOString()
@@ -47,6 +51,7 @@ export async function GET(req: Request) {
                 },
                 where: {
                     categoryId: Number(id),
+                    username,
                     createdAt: {
                         gte,
                         lte
@@ -57,17 +62,14 @@ export async function GET(req: Request) {
                 }
             })
 
-            const result = {
-                label: day,
+            results.push({
+                label: `${day} ${dayToShow}`,
                 sum: query._sum.value ?? 0,
-            }
+            })
 
-            results.push(result)
-
-            restar++
+            subtract++
         }
-
-        return new NextResponse(JSON.stringify({ data: results }))
+        return new NextResponse(JSON.stringify({ data: results, total: results.reduce((acc, curr) => acc + curr.sum, 0) }))
     }
 
     if (isMonthly) {
@@ -85,6 +87,7 @@ export async function GET(req: Request) {
             const query = await prisma.stadistic.aggregate({
                 where: {
                     categoryId: Number(id),
+                    username,
                     createdAt: {
                         gte: startOfMonth(date).toISOString(),
                         lte: endOfMonth(date).toISOString()

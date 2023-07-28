@@ -3,11 +3,13 @@
 import { useState } from "react";
 import { createStatistic } from "../actions/add-statistic.action"
 import { NumberInput, Button } from "@tremor/react";
+import { useUser } from "../state/use-user";
 
 export function AddStatisticsButton({ categoryId }: { categoryId: number }) {
     const [value, setValue] = useState<number | undefined>(undefined)
+    const { user } = useUser()
 
-    return <div className="flex w-1/3 gap-x-2">
+    return <div className="flex flex-col gap-3 mt-3 lg:mt-0 lg:flex-row lg:w-1/3 gap-x-2">
         <NumberInput
             min={1}
             value={value ?? ""}
@@ -19,7 +21,8 @@ export function AddStatisticsButton({ categoryId }: { categoryId: number }) {
         />
         <Button disabled={!value}
             onClick={() => {
-                createStatistic(value!, categoryId)
+                if (!user) return alert("You need to set a username first")
+                createStatistic(value!, categoryId, user)
                 setValue(undefined)
             }}>
             Add Value

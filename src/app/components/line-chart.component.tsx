@@ -4,6 +4,7 @@ import { useEffect, useState } from "react";
 import { QuestionMarkCircleIcon } from "@heroicons/react/outline"
 import { Card, Title, LineChart, Flex, Select, SelectItem } from "@tremor/react"
 import { AddStatisticsButton } from "./add-statistic.component"
+import { useUser } from "../state/use-user";
 
 const options = [
     { value: "weekly", label: "Weekly" },
@@ -12,31 +13,36 @@ const options = [
 
 function useStatistics(categoryId: number, queryBy: string) {
     const [data, setData] = useState([])
+    const [total, setTotal] = useState<number | undefined>()
+    const { user } = useUser()
 
     useEffect(() => {
         async function fetchStatistics() {
-            const { data } = await fetch(`http://localhost:3000/statictics?categoryId=${categoryId}&queryby=${queryBy}`).then((res) => res.json())
+            const { data, total } = await fetch(`http://localhost:3000/statictics?categoryId=${categoryId}&queryby=${queryBy}&username=${user}`).then((res) => res.json())
             setData(data)
+            setTotal(total)
         }
         fetchStatistics()
     }, [queryBy])
 
     return {
-        statistics: data
+        statistics: data,
+        total
     }
 }
 
 export function CategoryChart({ name, categoryId }: { name: string, categoryId: number }) {
     const [queryBy, setQueryBy] = useState("weekly")
-    const { statistics } = useStatistics(categoryId, queryBy)
+    const { statistics, total } = useStatistics(categoryId, queryBy)
 
     return <Card>
-        <Flex>
-            <Title>Your progress in {name}</Title>
-            <div className="w-48">
+        <div className="flex flex-col items-center my-1 lg:my-0 lg:flex-row lg:justify-around">
+            <Title>Your {queryBy} progress in {name} {queryBy === "weekly" && `(${total})`}</Title>
+            <div className="flex flex-col lg:flex-row gap-x-2">
                 <Select
                     value={queryBy}
                     onValueChange={setQueryBy}
+                    className="mt-2"
                 >
                     {options.map((option) => <SelectItem
                         key={option.value}
@@ -46,12 +52,12 @@ export function CategoryChart({ name, categoryId }: { name: string, categoryId: 
                         {option.label}
                     </SelectItem>)}
                 </Select>
+                <AddStatisticsButton categoryId={categoryId} />
             </div>
-            <AddStatisticsButton categoryId={categoryId} />
-        </Flex>
+        </div>
         <LineChart
             data={statistics}
-            className="mt-6"
+            className="mt-2"
             index="label"
             // categories={queryBy === "montly" ? ["sum"] : [name]}
             categories={["sum"]}

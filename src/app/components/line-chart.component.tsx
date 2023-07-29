@@ -34,7 +34,7 @@ function useStatistics(categoryId: number, queryBy: string) {
 export function CategoryChart({ name, categoryId }: { name: string, categoryId: number }) {
     const [queryBy, setQueryBy] = useState("weekly")
     const { statistics, total } = useStatistics(categoryId, queryBy)
-
+    
     return <Card>
         <div className="flex flex-col items-center my-1 lg:my-0 lg:flex-row lg:justify-around">
             <Title>Your {queryBy} progress in {name} {queryBy === "weekly" && `(${total})`}</Title>

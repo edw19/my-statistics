@@ -2,7 +2,7 @@
 
 import { useEffect, useState } from "react";
 import { QuestionMarkCircleIcon } from "@heroicons/react/outline"
-import { Card, Title, LineChart, Flex, Select, SelectItem } from "@tremor/react"
+import { Card, Title, LineChart, Select, SelectItem } from "@tremor/react"
 import { AddStatisticsButton } from "./add-statistic.component"
 import { useUser } from "../state/use-user";
 
@@ -18,7 +18,7 @@ function useStatistics(categoryId: number, queryBy: string) {
 
     useEffect(() => {
         async function fetchStatistics() {
-            const { data, total } = await fetch(`http://localhost:3000/statictics?categoryId=${categoryId}&queryby=${queryBy}&username=${user}`).then((res) => res.json())
+            const { data, total } = await fetch(`/statictics?categoryId=${categoryId}&queryby=${queryBy}&username=${user}`).then((res) => res.json())
             setData(data)
             setTotal(total)
         }

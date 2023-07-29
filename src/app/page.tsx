@@ -9,7 +9,7 @@ export default async function Home() {
 
   if (!username) return <User />
 
-  const categories = await fetch(`http://localhost:3000/categories?username=${username?.value}`).then((res) => res.json())
+  const categories = await fetch(`${process.env.URL}/categories?username=${username?.value}`).then((res) => res.json())
 
   return <div>
     <section className="flex items-center justify-center">

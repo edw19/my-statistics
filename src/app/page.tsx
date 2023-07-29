@@ -19,7 +19,7 @@ export default async function Home() {
       </div>
     </section>
     <section className="grid grid-cols-1 mx-6 gap-y-4">
-      {categories.data?.map((category: any) => {
+      {categories?.data?.map((category: any) => {
         return <CategoryChart
           name={category.name}
           categoryId={category.id}

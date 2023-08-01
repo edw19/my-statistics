@@ -1,6 +1,7 @@
 import { CategoryChart } from "./components/line-chart.component"
 import dynamic from 'next/dynamic'
 import { cookies } from 'next/headers'
+import { CreateCategory } from "./components/create-category.component"
 
 const User = dynamic(() => import("./components/user.component"), { ssr: false })
 
@@ -12,9 +13,10 @@ export default async function Home() {
   const categories = await fetch(`${process.env.URL}/categories?username=${username?.value}`).then((res) => res.json())
 
   return <div>
-    <section className="flex items-center justify-center">
-      <div className="flex items-center gap-2 lg:w-2/5">
-        <h1 className="w-full my-3 text-4xl text-white">Your Statistics</h1>
+    <section className="flex items-center justify-around">
+      {username && <CreateCategory />}
+      <div className="flex items-center gap-x-3">
+        <h1 className="my-3 text-4xl text-white">Your Statistics</h1>
         <User />
       </div>
     </section>

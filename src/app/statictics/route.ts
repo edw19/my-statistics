@@ -13,7 +13,7 @@ interface Value {
 
 export async function GET(req: Request) {
     const { searchParams } = new URL(req.url)
-    const id = searchParams.get('categoryId')
+    const id = searchParams.get('categoryId') as any
     const queryby = searchParams.get('queryby')
     const username = searchParams.get('username')
     const isWeekly = queryby === "weekly"
@@ -21,7 +21,7 @@ export async function GET(req: Request) {
 
     const category = await prisma.category.findUnique({
         where: {
-            id: Number(id)
+            id: id
         }
     })
 
@@ -50,7 +50,7 @@ export async function GET(req: Request) {
                     createdAt: 'desc'
                 },
                 where: {
-                    categoryId: Number(id),
+                    categoryId: id,
                     username,
                     createdAt: {
                         gte,
@@ -64,7 +64,7 @@ export async function GET(req: Request) {
 
             results.push({
                 label: `${day} ${dayToShow}`,
-                sum: query._sum.value ?? 0,
+                sum: query._sum?.value ?? 0,
             })
 
             subtract++
@@ -86,7 +86,7 @@ export async function GET(req: Request) {
 
             const query = await prisma.stadistic.aggregate({
                 where: {
-                    categoryId: Number(id),
+                    categoryId: id,
                     username,
                     createdAt: {
                         gte: startOfMonth(date).toISOString(),
@@ -99,7 +99,7 @@ export async function GET(req: Request) {
             })
 
             const result = {
-                sum: query._sum.value ?? 0,
+                sum: query._sum?.value ?? 0,
                 label: month,
             }
 

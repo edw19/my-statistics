@@ -5,7 +5,7 @@ import { createStatistic } from "../actions/add-statistic.action"
 import { NumberInput, Button } from "@tremor/react";
 import { useUser } from "../state/use-user";
 
-export function AddStatisticsButton({ categoryId }: { categoryId: number }) {
+export function AddStatisticsButton({ categoryId }: { categoryId: string }) {
     const [value, setValue] = useState<number | undefined>(undefined)
     const { user } = useUser()
 

@@ -11,7 +11,7 @@ const options = [
     { value: "montly", label: "Montly" }
 ]
 
-function useStatistics(categoryId: number, queryBy: string) {
+function useStatistics(categoryId: string, queryBy: string) {
     const [data, setData] = useState([])
     const [total, setTotal] = useState<number | undefined>()
     const { user } = useUser()
@@ -31,7 +31,7 @@ function useStatistics(categoryId: number, queryBy: string) {
     }
 }
 
-export function CategoryChart({ name, categoryId }: { name: string, categoryId: number }) {
+export function CategoryChart({ name, categoryId }: { name: string, categoryId: string }) {
     const [queryBy, setQueryBy] = useState("weekly")
     const { statistics, total } = useStatistics(categoryId, queryBy)
     

@@ -13,7 +13,7 @@ const options = [
 
 function useStatistics(categoryId: string, queryBy: string) {
     const [data, setData] = useState([])
-    const [total, setTotal] = useState<number | undefined>()
+    const [total, setTotal] = useState<number>(0)
     const { user } = useUser()
 
     useEffect(() => {

@@ -22,7 +22,7 @@ export function AddStatisticsButton({ categoryId }: { categoryId: string }) {
         <Button disabled={!value}
             onClick={() => {
                 if (!user) return alert("You need to set a username first")
-                createStatistic(value!, categoryId, user)
+                createStatistic(value!, categoryId, user, new Date())
                 setValue(undefined)
             }}>
             Add Value

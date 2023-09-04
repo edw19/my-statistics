@@ -1,6 +1,7 @@
 import prisma from "@/utils/prisma";
 import { NextResponse } from "next/server";
 import { startOfMonth, endOfMonth, startOfDay, endOfDay, sub, getDay, getDate } from 'date-fns'
+import { log } from "console";
 
 const months = ["January", "February", "March", "April", "May", "June", "July", "August", "September", "October", "November", "December"]
 const days = ["Sunday", "Monday", "Tuesday", "Wednesday", "Thursday", "Friday", "Saturday"]
@@ -9,6 +10,7 @@ const days = ["Sunday", "Monday", "Tuesday", "Wednesday", "Thursday", "Friday", 
 interface Value {
     label: string
     sum: number
+    repetitions: number
 }
 
 export async function GET(req: Request) {
@@ -59,12 +61,16 @@ export async function GET(req: Request) {
                 },
                 _sum: {
                     value: true
+                },
+                _count: {
+                    _all: true
                 }
             })
 
             results.push({
                 label: `${day} ${dayToShow}`,
                 sum: query._sum?.value ?? 0,
+                repetitions: query._count?._all ?? 0
             })
 
             subtract++
